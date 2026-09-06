@@ -22,7 +22,17 @@ export const antdTheme: ThemeConfig = {
     fontFamily: fontFamilySans.join(', '),
   },
   components: {
-    Button: { borderRadius: radius('md'), controlHeight: 40, fontWeight: 500 },
+    Button: {
+      borderRadius: radius('md'),
+      controlHeight: 40,
+      fontWeight: 500,
+      // 主按钮白字压在 colors.primary 上只有 2.17:1（WCAG AA 不达标），
+      // 改用 primaryDark 系承载白字，比值见 tokens.ts 注释与 test/theme.test.ts。
+      colorPrimary: colors.primaryDark,
+      colorPrimaryHover: colors.primaryDarkHover,
+      colorPrimaryActive: colors.primaryDarkActive,
+      primaryColor: '#ffffff',
+    },
     Card: {
       borderRadius: radius('lg'),
       boxShadow: '0 1px 3px 0 rgba(140,192,32,0.1)',
@@ -37,7 +47,15 @@ export const antdTheme: ThemeConfig = {
     Input: { borderRadius: radius('md'), controlHeight: 40 },
     Select: { borderRadius: radius('md'), controlHeight: 40 },
     Tag: { borderRadius: radius('DEFAULT') },
-    Menu: { itemBorderRadius: radius('md'), itemMarginInline: 8, itemMarginBlock: 4 },
+    Menu: {
+      itemBorderRadius: radius('md'),
+      itemMarginInline: 8,
+      itemMarginBlock: 4,
+      // 侧栏选中项原用 colors.primary 当文字色，压在浅底上只有 3.22:1，
+      // 改用 primaryDark（对 bgLayout 4.56:1）+ bgLayout 浅底承托。
+      itemSelectedColor: colors.primaryDark,
+      itemSelectedBg: colors.bgLayout,
+    },
     Layout: {
       headerBg: colors.bgContainer,
       siderBg: colors.bgContainer,
