@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Button, Card, Col, Input, Row, Select, Statistic } from 'antd';
+import { Button, Card, Col, Input, List, Row, Select, Statistic } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   AppShell,
@@ -119,6 +119,12 @@ export default function App() {
         dataSource={rows}
         pagination={false}
       />
+
+      {/* 验证 AppConfigProvider 的 renderEmpty：裸 <List>（不经 ListPage 的 emptyText）
+          空态跟着 changeLanguage 切换，而不是固定显示 antd 默认的英文 "No data"。 */}
+      <Card title="AppConfigProvider renderEmpty demo" style={{ marginTop: 16 }}>
+        <List dataSource={[]} renderItem={(item) => <List.Item>{String(item)}</List.Item>} />
+      </Card>
 
       <FormModal
         open={modalOpen}

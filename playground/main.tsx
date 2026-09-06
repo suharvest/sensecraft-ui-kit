@@ -1,8 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ConfigProvider } from 'antd';
 import { MemoryRouter } from 'react-router-dom';
-import { antdTheme, initI18n } from '@sensecraft/ui-kit';
+import { AppConfigProvider, initI18n } from '@sensecraft/ui-kit';
 import App from './App';
 
 initI18n({
@@ -15,10 +14,10 @@ initI18n({
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ConfigProvider theme={antdTheme}>
+    <AppConfigProvider>
       <MemoryRouter>
         <App />
       </MemoryRouter>
-    </ConfigProvider>
+    </AppConfigProvider>
   </React.StrictMode>,
 );
