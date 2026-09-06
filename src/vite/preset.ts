@@ -1,5 +1,5 @@
 /**
- * 独立入口 `@sensecraft/ui-kit/vite`，不引入 React —— 供宿主应用的 vite.config.ts 在
+ * 独立入口 `@suharvest/ui-kit/vite`，不引入 React —— 供宿主应用的 vite.config.ts 在
  * Node 侧（配置求值阶段）直接 import，不会把 React 相关代码带进配置文件的模块图。
  *
  * 根因：kit 以 `file:` 依赖接入时，Rollup 按“不同物理路径 = 不同模块”处理，
@@ -32,7 +32,7 @@ export interface ViteKitPresetConfig {
  *
  * ```ts
  * import { defineConfig, mergeConfig } from 'vite';
- * import { viteKitPreset } from '@sensecraft/ui-kit/vite';
+ * import { viteKitPreset } from '@suharvest/ui-kit/vite';
  *
  * export default defineConfig(mergeConfig(viteKitPreset(), {
  *   plugins: [react()],
@@ -48,7 +48,7 @@ export function viteKitPreset(options: ViteKitPresetOptions = {}): ViteKitPreset
       dedupe: [...KIT_PEER_DEPS, ...extraDedupe],
     },
     optimizeDeps: {
-      include: [...KIT_PEER_DEPS, '@sensecraft/ui-kit', ...extraOptimizeInclude],
+      include: [...KIT_PEER_DEPS, '@suharvest/ui-kit', ...extraOptimizeInclude],
     },
   };
 }

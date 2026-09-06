@@ -11,7 +11,7 @@ describe('viteKitPreset', () => {
 
   it('把同一批依赖和 kit 自身加入 optimizeDeps.include', () => {
     const preset = viteKitPreset();
-    expect(preset.optimizeDeps.include).toEqual(expect.arrayContaining(['react-router-dom', 'i18next', '@sensecraft/ui-kit']));
+    expect(preset.optimizeDeps.include).toEqual(expect.arrayContaining(['react-router-dom', 'i18next', '@suharvest/ui-kit']));
   });
 
   it('支持宿主追加自己的 dedupe / optimizeDeps 目标', () => {

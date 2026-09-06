@@ -10,7 +10,7 @@ import {
   StatusTag,
   type MenuItemDef,
   type StatusKey,
-} from '@sensecraft/ui-kit';
+} from '@suharvest/ui-kit';
 import pkg from '../package.json';
 
 const kitVersion = `v${pkg.version}`;
@@ -51,7 +51,7 @@ export default function App() {
         title={t('demo:appTitle')}
         subtitle={t('common:auth.login')}
         onSubmit={() => setView('shell')}
-        footer={`@sensecraft/ui-kit ${kitVersion}`}
+        footer={`@suharvest/ui-kit ${kitVersion}`}
         extra={
           <Button block onClick={() => setView('shell')}>
             {t('common:action.back')}

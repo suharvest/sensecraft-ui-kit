@@ -1,5 +1,5 @@
 {
-  "name": "@sensecraft/ui-kit",
+  "name": "@suharvest/ui-kit",
   "version": "0.1.5",
   "description": "Shared React + antd UI kit for SenseCraft demo applications (theme tokens, app shell, page patterns, i18n).",
   "license": "MIT",

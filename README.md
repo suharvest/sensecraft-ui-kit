@@ -1,4 +1,4 @@
-# @sensecraft/ui-kit
+# @suharvest/ui-kit
 
 Seeed SenseCraft 应用统一 UI 组件库 —— SenseCraft 系列应用的共享前端基座：设计 token、应用外壳、页面模式、双语词典。
 以 MIT 许可开源（见 [LICENSE](./LICENSE)）。
@@ -20,7 +20,7 @@ Seeed SenseCraft 应用统一 UI 组件库 —— SenseCraft 系列应用的共�
 // package.json
 {
   "dependencies": {
-    "@sensecraft/ui-kit": "git+ssh://git@github.com/suharvest/sensecraft-ui-kit.git#v0.1.5"
+    "@suharvest/ui-kit": "git+ssh://git@github.com/suharvest/sensecraft-ui-kit.git#v0.1.5"
   }
 }
 ```
@@ -30,17 +30,17 @@ npm 安装 git 依赖时会克隆仓库、装 devDependencies、执行 `prepare`
 升级 kit 时改 tag 号后 `npm install` 即可；npm 会按 lockfile 里记录的 commit 锁定，
 tag 改动不会自动生效，必须显式改 package.json 里的 tag 再安装。
 
-### 2. npm registry（即将发布 `@sensecraft/ui-kit`）
+### 2. npm registry（即将发布 `@suharvest/ui-kit`）
 
 ```jsonc
 {
   "dependencies": {
-    "@sensecraft/ui-kit": "^0.1.5"
+    "@suharvest/ui-kit": "^0.1.5"
   }
 }
 ```
 
-包名 `@sensecraft/ui-kit` 为 scoped 包，`publishConfig.access` 已设为 `public`。
+包名 `@suharvest/ui-kit` 为 scoped 包，`publishConfig.access` 已设为 `public`。
 
 ### 3. 本地开发（`npm link`）
 
@@ -48,9 +48,9 @@ tag 改动不会自动生效，必须显式改 package.json 里的 tag 再安装
 
 ```bash
 cd ~/project/sensecraft-ui-kit && npm run build && npm link
-cd <消费方仓库>/web/ui && npm link @sensecraft/ui-kit
+cd <消费方仓库>/web/ui && npm link @suharvest/ui-kit
 # 改完 kit 后重新 build，消费方 dev server 会拾取
-# 解除：npm unlink @sensecraft/ui-kit && npm install
+# 解除：npm unlink @suharvest/ui-kit && npm install
 ```
 
 `npm link` 是符号链接，与 `file:` 依赖有同一个双份 React / Router 实例的坑，
@@ -73,7 +73,7 @@ kit 以 `file:` / `npm link` 方式接入时，Rollup 按物理路径分模块�
 // vite.config.ts
 import { defineConfig, mergeConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { viteKitPreset } from '@sensecraft/ui-kit/vite';
+import { viteKitPreset } from '@suharvest/ui-kit/vite';
 
 export default defineConfig(
   mergeConfig(viteKitPreset(), {
@@ -89,8 +89,8 @@ export default defineConfig(
 **SPA 用 `file:` 依赖时必须宿主先 `npm run build` 再 `docker build`。**
 `file:` 依赖在容器里就是一个真实目录拷贝，不会像 git 依赖那样在 `npm install` 时自带可执行的
 构建产物；如果 Dockerfile 里跳过宿主构建、直接把源码整个拷进镜像再装依赖，装进去的是 kit 的
-TypeScript 源文件而非 `dist/`，`import '@sensecraft/ui-kit'` 会解析失败或对不上 `exports` 声明的路径。
-正确顺序是本机（或 CI）先把 kit 构建好、`node_modules/@sensecraft/ui-kit` 落地的是构建产物，
+TypeScript 源文件而非 `dist/`，`import '@suharvest/ui-kit'` 会解析失败或对不上 `exports` 声明的路径。
+正确顺序是本机（或 CI）先把 kit 构建好、`node_modules/@suharvest/ui-kit` 落地的是构建产物，
 再执行宿主自己的 `npm run build` 和 `docker build`：
 
 ```dockerfile
@@ -101,7 +101,7 @@ WORKDIR /app
 COPY sensecraft-ui-kit ./sensecraft-ui-kit
 COPY web/ui ./web/ui
 WORKDIR /app/web/ui
-RUN npm ci && npm run build   # 此时 node_modules/@sensecraft/ui-kit 已经是构建产物，不是源码
+RUN npm ci && npm run build   # 此时 node_modules/@suharvest/ui-kit 已经是构建产物，不是源码
 
 FROM nginx:alpine  # 或宿主自己的运行时基础镜像
 COPY --from=builder /app/web/ui/dist /usr/share/nginx/html
@@ -116,7 +116,7 @@ COPY --from=builder /app/web/ui/dist /usr/share/nginx/html
 "No data"）：
 
 ```tsx
-import { AppConfigProvider } from '@sensecraft/ui-kit';
+import { AppConfigProvider } from '@suharvest/ui-kit';
 
 <AppConfigProvider>{/* ... */}</AppConfigProvider>
 ```
@@ -125,7 +125,7 @@ import { AppConfigProvider } from '@sensecraft/ui-kit';
 
 ```tsx
 import { ConfigProvider } from 'antd';
-import { antdTheme } from '@sensecraft/ui-kit';
+import { antdTheme } from '@suharvest/ui-kit';
 
 <ConfigProvider theme={antdTheme}>{/* ... */}</ConfigProvider>
 ```
@@ -133,14 +133,14 @@ import { antdTheme } from '@sensecraft/ui-kit';
 Tailwind 侧（可选）在 `tailwind.config.js` 展开同源刻度：
 
 ```js
-const { tailwindExtend } = require('@sensecraft/ui-kit');
+const { tailwindExtend } = require('@suharvest/ui-kit');
 module.exports = { theme: { extend: tailwindExtend } };
 ```
 
 ### 2. AppShell 包裹路由
 
 ```tsx
-import { AppShell, ProtectedRoute } from '@sensecraft/ui-kit';
+import { AppShell, ProtectedRoute } from '@suharvest/ui-kit';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 
 const navigate = useNavigate();
@@ -181,7 +181,7 @@ const { pathname } = useLocation();
 ### 3. 初始化 i18n
 
 ```tsx
-import { initI18n } from '@sensecraft/ui-kit';
+import { initI18n } from '@suharvest/ui-kit';
 
 initI18n({
   defaultLanguage: 'zh',

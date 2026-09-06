@@ -1,7 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter } from 'react-router-dom';
-import { AppConfigProvider, initI18n } from '@sensecraft/ui-kit';
+import { AppConfigProvider, initI18n } from '@suharvest/ui-kit';
 import App from './App';
 
 initI18n({

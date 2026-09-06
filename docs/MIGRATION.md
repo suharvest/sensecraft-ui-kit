@@ -15,8 +15,8 @@
 对象：`unmanned-store-access`、`edge-retail-recognition`（新建）、`sensecraft-voice-web`（策略 b）、
 `eldercare-alarm` / `warehouse_system` / `Solution_HVAC_SmartControl`（策略 a 完成技术栈迁移之后）。
 
-1. 装依赖：`"@sensecraft/ui-kit": "git+ssh://…#v0.1.0"`，peerDeps 里的 react / antd / react-router-dom / react-i18next 自己装
-2. `vite.config.ts` 用 `mergeConfig(viteKitPreset(), {...})`（`import { viteKitPreset } from '@sensecraft/ui-kit/vite'`），
+1. 装依赖：`"@suharvest/ui-kit": "git+ssh://…#v0.1.0"`，peerDeps 里的 react / antd / react-router-dom / react-i18next 自己装
+2. `vite.config.ts` 用 `mergeConfig(viteKitPreset(), {...})`（`import { viteKitPreset } from '@suharvest/ui-kit/vite'`），
    不要自己手写 `resolve.dedupe`——见 README「Vite 配置（`file:` 依赖必读）」，根因是 `file:` 依赖下 Rollup 把
    react-router-dom / i18next 等打成两份，生产构建白屏（dev 正常）
 3. 按 README「接入三步」接 `ConfigProvider` → `AppShell` → `initI18n`；`ProtectedRoute` / `AppShell` 的
@@ -45,7 +45,7 @@ React 组件不跨框架，Vue 侧只接 token 层，两条路：
 
 ```js
 // main.ts
-import '@sensecraft/ui-kit/tokens.css';
+import '@suharvest/ui-kit/tokens.css';
 ```
 
 ```css
@@ -60,7 +60,7 @@ import '@sensecraft/ui-kit/tokens.css';
 **路线 2：JS 侧读同一份 token 对象**（用 Element Plus / Naive UI 等需要 JS 主题配置时）
 
 ```ts
-import { colors, statusColors, borderRadius } from '@sensecraft/ui-kit';
+import { colors, statusColors, borderRadius } from '@suharvest/ui-kit';
 // 映射进 Element Plus 的 CSS 变量或 Naive UI 的 themeOverrides
 ```
 
