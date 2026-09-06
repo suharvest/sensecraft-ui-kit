@@ -1,0 +1,57 @@
+{
+  "name": "@sensecraft/ui-kit",
+  "version": "0.1.0",
+  "description": "Shared React + antd UI kit for SenseCraft demo applications (theme tokens, app shell, page patterns, i18n).",
+  "license": "MIT",
+  "type": "module",
+  "files": ["dist", "README.md", "docs"],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./dist/tokens.css": "./dist/tokens.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": ["*.css"],
+  "scripts": {
+    "build": "vite build && node scripts/gen-tokens-css.mjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "playground": "vite --config vite.playground.config.ts",
+    "playground:build": "vite build --config vite.playground.config.ts",
+    "prepare-release": "npm run typecheck && npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "antd": "^5.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.0.0 || ^15.0.0",
+    "react-router-dom": "^6.8.0"
+  },
+  "dependencies": {
+    "i18next": "^23.11.5"
+  },
+  "devDependencies": {
+    "@ant-design/icons": "^5.3.7",
+    "@testing-library/react": "^14.2.2",
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.2.1",
+    "antd": "^5.16.1",
+    "jsdom": "^24.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.0",
+    "react-router-dom": "^6.22.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "vite-plugin-dts": "^3.9.0",
+    "vitest": "^1.5.0"
+  }
+}
