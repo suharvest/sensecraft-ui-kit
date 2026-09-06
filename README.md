@@ -1,42 +1,67 @@
 # @sensecraft/ui-kit
 
-SenseCraft 系列 demo 应用的共享前端基座：设计 token、应用外壳、页面模式、双语词典。
+Seeed SenseCraft 应用统一 UI 组件库 —— SenseCraft 系列应用的共享前端基座：设计 token、应用外壳、页面模式、双语词典。
+以 MIT 许可开源（见 [LICENSE](./LICENSE)）。
 实现依据 `seeed-solutions-hub/docs/specs/ui-style-guide.md`（综合 sensecraft-voice-web 与 warehouse_system/frontend 两个基准）。
 
 - 技术栈：React 18 + antd 5 + TypeScript，Vite library mode 产出 ESM + `.d.ts`
-- 分发：git 依赖，不发 npm registry
+- 分发：git tag 依赖（当前）；npm registry 发布后可切换为版本号依赖
 - 附带 `dist/tokens.css`（纯 CSS 变量），供 Vue / 原生 JS 应用套同一套 token
 
 ## 安装
 
-两种方式任选，版本以 tag 锁定。
+三种方式，按场景选。
+
+### 1. git tag 依赖（当前推荐）
+
+仓库转公开前，消费方机器需要配置好 GitHub SSH key；转公开后 `git+https://` 亦可。
 
 ```jsonc
-// package.json —— git 依赖（推荐，多机协作用这个）
+// package.json
 {
   "dependencies": {
-    "@sensecraft/ui-kit": "git+ssh://git@<host>/<group>/sensecraft-ui-kit.git#v0.1.0"
+    "@sensecraft/ui-kit": "git+ssh://git@github.com/suharvest/sensecraft-ui-kit.git#v0.1.5"
   }
 }
 ```
 
+npm 安装 git 依赖时会克隆仓库、装 devDependencies、执行 `prepare`（即 `npm run build`），
+`dist/` 在消费方机器上现场生成，因此本仓库不提交 `dist/`。
+升级 kit 时改 tag 号后 `npm install` 即可；npm 会按 lockfile 里记录的 commit 锁定，
+tag 改动不会自动生效，必须显式改 package.json 里的 tag 再安装。
+
+### 2. npm registry（即将发布 `@sensecraft/ui-kit`）
+
 ```jsonc
-// package.json —— 本地路径（同一台机器上并排开发时用）
 {
   "dependencies": {
-    "@sensecraft/ui-kit": "file:../sensecraft-ui-kit"
+    "@sensecraft/ui-kit": "^0.1.5"
   }
 }
 ```
 
-git 依赖方式下 npm 会在安装时执行 `prepare`，需要目标机器能拉到仓库并装得上 devDependencies；
-若目标环境只想拿产物，可以在本仓库 `npm run build` 后把 `dist/` 一并提交到发布分支再引用该分支。
+包名 `@sensecraft/ui-kit` 为 scoped 包，`publishConfig.access` 已设为 `public`。
+
+### 3. 本地开发（`npm link`）
+
+同一台机器上并排改 kit 和消费方时用 link，避免每次改动都要提交打 tag：
+
+```bash
+cd ~/project/sensecraft-ui-kit && npm run build && npm link
+cd <消费方仓库>/web/ui && npm link @sensecraft/ui-kit
+# 改完 kit 后重新 build，消费方 dev server 会拾取
+# 解除：npm unlink @sensecraft/ui-kit && npm install
+```
+
+`npm link` 是符号链接，与 `file:` 依赖有同一个双份 React / Router 实例的坑，
+必须配 `viteKitPreset()`（见下节）。git tag 依赖装进 `node_modules` 的是普通目录，
+但 `viteKitPreset()` 仍需保留：它同时负责 `optimizeDeps` 与 antd 主题的 token 注入。
 
 peerDependencies（宿主应用自己装）：`react` `react-dom` `antd@^5.12` `react-router-dom@^6.8` `react-i18next`。
 
-## Vite 配置（`file:` 依赖必读）
+## Vite 配置（必读）
 
-kit 以 `file:` 依赖接入时，Rollup 按物理路径分模块，`react` / `react-router-dom` / `antd` /
+kit 以 `file:` / `npm link` 方式接入时，Rollup 按物理路径分模块，`react` / `react-router-dom` / `antd` /
 `react-i18next` / `i18next` 会各打包一份进宿主 bundle、一份进 kit 侧解析结果，两份模块级单例互不相认——
 `react-router-dom` 报 `useLocation() may be used only in the context of a <Router>`，
 `react-i18next` 的 `<Trans>` / `useTranslation` 拿不到已初始化的实例。dev 模式下 esbuild 预打包偶尔恰好去重掉，
