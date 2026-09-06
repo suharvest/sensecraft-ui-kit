@@ -15,6 +15,9 @@
     "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": { "@sensecraft/ui-kit": ["src/index.ts"] },
     "types": ["node", "vitest/globals"]
   },
   "include": ["src", "playground", "test", "vite.config.ts", "vite.playground.config.ts", "scripts"]

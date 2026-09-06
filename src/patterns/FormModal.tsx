@@ -66,7 +66,6 @@ export function FormModal<Values extends object = Record<string, unknown>>(props
         const values = await form.validateFields();
         await onSubmit(values);
       }}
-      destroyOnClose
       {...modalProps}
     >
       <Form form={form} layout={layout} preserve={false}>
