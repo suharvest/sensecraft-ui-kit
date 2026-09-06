@@ -56,6 +56,50 @@ export const antdTheme: ThemeConfig = {
       itemSelectedColor: colors.primaryDark,
       itemSelectedBg: colors.bgLayout,
     },
+    Pagination: {
+      // 当前页码文字默认压在 colorPrimary（primary，对白 2.17:1）上，不达标；
+      // 改用 primaryDark（对白 4.78:1 / 对 bgLayout 4.56:1）。
+      colorPrimary: colors.primaryDark,
+      colorPrimaryHover: colors.primaryDarkHover,
+    },
+    Tabs: {
+      // 选中项文字默认落到全局 colorPrimary（primary，对白 2.17:1，不达标），
+      // 改用 primaryDark（对白 4.78:1）。inkBar 是标示选中态的功能性细线，
+      // 按 WCAG 1.4.11 非文字 UI 3:1 门槛核算，primary 对白仅 2.17:1 同样不达标，
+      // 一并改为 primaryDark。
+      itemSelectedColor: colors.primaryDark,
+      inkBarColor: colors.primaryDark,
+    },
+    Radio: {
+      // Radio.Button 选中态边框/文字（outline）及实心态白字底色均落到 colorPrimary，
+      // 文字场景对白仅 2.17:1（<4.5 不达标），非文字边框场景同样 <3:1，
+      // 改用 primaryDark（对白 4.78:1）。
+      colorPrimary: colors.primaryDark,
+    },
+    Checkbox: {
+      // 选中框底色为 colorPrimary，勾选图标为固定白色，对比度 2.17:1（<3:1 非文字门槛不达标），
+      // 改用 primaryDark（对白 4.78:1）。
+      colorPrimary: colors.primaryDark,
+    },
+    Switch: {
+      // 开启态滑轨底色为 colorPrimary，作为承载"开/关"状态的功能色块，
+      // 对相邻页面底色仅 2.07~2.17:1（<3:1 非文字门槛不达标），改用 primaryDark。
+      colorPrimary: colors.primaryDark,
+    },
+    Progress: {
+      // 进度条填充色为 colorPrimary，是承载百分比信息的图形对象，
+      // 按 WCAG 1.4.11 需 ≥3:1，primary 对白/对 bgLayout 仅 2.17/2.07:1，改用 primaryDark。
+      colorPrimary: colors.primaryDark,
+    },
+    Steps: {
+      // 当前步/完成步图标为白字压 colorPrimary 圆点（2.17:1，<4.5 不达标），
+      // 连接线同为 colorPrimary 装饰线（<3:1 不达标），一并改用 primaryDark。
+      colorPrimary: colors.primaryDark,
+    },
+    // 已核查未改动：
+    // - Link/Typography.Link 的 colorLink 默认落到 colorInfo（#1890ff，对白 3.24:1），
+    //   不经过 colorPrimary 链路，非本次"主色劫持"问题范围，不在此处处理。
+    // - Card boxShadow 用 primary 做阴影色（装饰用途，不承载文字/状态判读），不动。
     Layout: {
       headerBg: colors.bgContainer,
       siderBg: colors.bgContainer,

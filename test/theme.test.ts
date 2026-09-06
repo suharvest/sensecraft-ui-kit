@@ -98,4 +98,27 @@ describe('WCAG 对比度门（docs/reports/positioning-ux-review-2026-09-06.md �
       expect(contrast(fg, bg), `status "${key}" fg/bg`).toBeGreaterThanOrEqual(AA_NORMAL);
     }
   });
+
+  it('分页当前页码：文字在白底/bgLayout 上 ≥4.5:1', () => {
+    const fg = antdTheme.components?.Pagination?.colorPrimary as string;
+    expect(contrast(fg, colors.bgContainer)).toBeGreaterThanOrEqual(AA_NORMAL);
+    expect(contrast(fg, colors.bgLayout)).toBeGreaterThanOrEqual(AA_NORMAL);
+  });
+
+  it('Tabs 选中文字与 inkBar：分别满足文字 4.5:1 与非文字 3:1', () => {
+    const AA_UI = 3;
+    const selected = antdTheme.components?.Tabs?.itemSelectedColor as string;
+    const inkBar = antdTheme.components?.Tabs?.inkBarColor as string;
+    expect(contrast(selected, colors.bgContainer)).toBeGreaterThanOrEqual(AA_NORMAL);
+    expect(contrast(inkBar, colors.bgContainer)).toBeGreaterThanOrEqual(AA_UI);
+  });
+
+  it('Radio/Checkbox/Switch/Progress/Steps 的 colorPrimary 均不再直接用 primary（2.17:1）', () => {
+    const AA_UI = 3;
+    for (const name of ['Radio', 'Checkbox', 'Switch', 'Progress', 'Steps'] as const) {
+      const c = antdTheme.components?.[name]?.colorPrimary as string;
+      expect(contrast(c, colors.bgContainer), `${name}.colorPrimary vs white`).toBeGreaterThanOrEqual(AA_UI);
+      expect(c).not.toBe(colors.primary);
+    }
+  });
 });
