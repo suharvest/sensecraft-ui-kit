@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { Form, Modal } from 'antd';
 import type { FormInstance, FormProps, ModalProps } from 'antd';
 import { useTranslation } from 'react-i18next';
@@ -46,12 +46,19 @@ export function FormModal<Values extends object = Record<string, unknown>>(props
   const [internalForm] = Form.useForm<Values>();
   const form = externalForm ?? internalForm;
 
+  // 只在弹窗由关变开时重置一次：initialValues 常以字面量传入，随宿主每次
+  // 渲染换新引用，若放进依赖会在用户输入过程中把已填内容清掉。
+  const wasOpen = useRef(false);
+  const initialValuesRef = useRef(initialValues);
+  initialValuesRef.current = initialValues;
+
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpen.current) {
       form.resetFields();
-      if (initialValues) form.setFieldsValue(initialValues as never);
+      if (initialValuesRef.current) form.setFieldsValue(initialValuesRef.current as never);
     }
-  }, [open, initialValues, form]);
+    wasOpen.current = open;
+  }, [open, form]);
 
   return (
     <Modal
