@@ -70,7 +70,13 @@ export function FormModal<Values extends object = Record<string, unknown>>(props
       cancelText={cancelText ?? t('action.cancel')}
       onCancel={onCancel}
       onOk={async () => {
-        const values = await form.validateFields();
+        let values: Values;
+        try {
+          values = await form.validateFields();
+        } catch {
+          // 校验未通过：antd 已在字段上给出错误提示，这里吞掉避免 unhandled rejection
+          return;
+        }
         await onSubmit(values);
       }}
       {...modalProps}

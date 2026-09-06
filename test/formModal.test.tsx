@@ -52,4 +52,12 @@ describe('FormModal', () => {
     expect((screen.getByLabelText('name') as HTMLInputElement).value).toBe('typed');
   });
 
+  it('校验未通过时不调用 onSubmit，也不抛未处理的 rejection', async () => {
+    const onSubmit = vi.fn();
+    renderModal({ onSubmit });
+    await act(async () => {
+      fireEvent.click(document.querySelector('.ant-modal-footer .ant-btn-primary') as HTMLButtonElement);
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });
