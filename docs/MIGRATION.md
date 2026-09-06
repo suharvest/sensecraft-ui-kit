@@ -16,8 +16,13 @@
 `eldercare-alarm` / `warehouse_system` / `Solution_HVAC_SmartControl`（策略 a 完成技术栈迁移之后）。
 
 1. 装依赖：`"@sensecraft/ui-kit": "git+ssh://…#v0.1.0"`，peerDeps 里的 react / antd / react-router-dom / react-i18next 自己装
-2. 按 README「接入三步」接 `ConfigProvider` → `AppShell` → `initI18n`
-3. 列表页用 `ListPage`，详情页用 `DetailPage`，新增/编辑弹窗用 `FormModal`，状态列一律 `StatusTag`
+2. `vite.config.ts` 用 `mergeConfig(viteKitPreset(), {...})`（`import { viteKitPreset } from '@sensecraft/ui-kit/vite'`），
+   不要自己手写 `resolve.dedupe`——见 README「Vite 配置（`file:` 依赖必读）」，根因是 `file:` 依赖下 Rollup 把
+   react-router-dom / i18next 等打成两份，生产构建白屏（dev 正常）
+3. 按 README「接入三步」接 `ConfigProvider` → `AppShell` → `initI18n`
+4. 列表页用 `ListPage`，详情页用 `DetailPage`，新增/编辑弹窗用 `FormModal`，状态列一律 `StatusTag`
+5. **SPA 用 `file:` 依赖时必须宿主先 `npm run build` 再 `docker build`**——Dockerfile 里不能跳过宿主构建
+   直接拷源码进镜像再装依赖，否则装进去的是 kit 的 TS 源码而非 `dist/`；可复制的 Dockerfile 片段见 README 同一节
 
 已有 React 应用（策略 b）额外要做的清理：
 

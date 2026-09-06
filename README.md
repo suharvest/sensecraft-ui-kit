@@ -34,6 +34,54 @@ git 依赖方式下 npm 会在安装时执行 `prepare`，需要目标机器能�
 
 peerDependencies（宿主应用自己装）：`react` `react-dom` `antd@^5.12` `react-router-dom@^6.8` `react-i18next`。
 
+## Vite 配置（`file:` 依赖必读）
+
+kit 以 `file:` 依赖接入时，Rollup 按物理路径分模块，`react` / `react-router-dom` / `antd` /
+`react-i18next` / `i18next` 会各打包一份进宿主 bundle、一份进 kit 侧解析结果，两份模块级单例互不相认——
+`react-router-dom` 报 `useLocation() may be used only in the context of a <Router>`，
+`react-i18next` 的 `<Trans>` / `useTranslation` 拿不到已初始化的实例。dev 模式下 esbuild 预打包偶尔恰好去重掉，
+`npm run build`（Rollup）不会，所以这个坑只在生产构建后现形，dev 环境看不出来。
+
+统一用 `viteKitPreset()`（独立入口，不引入 React，`vite.config.ts` 在 Node 侧直接 import 也安全）：
+
+```ts
+// vite.config.ts
+import { defineConfig, mergeConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { viteKitPreset } from '@sensecraft/ui-kit/vite';
+
+export default defineConfig(
+  mergeConfig(viteKitPreset(), {
+    plugins: [react()],
+    // 应用自己的其余配置
+  }),
+);
+```
+
+`viteKitPreset()` 返回 `{ resolve: { dedupe }, optimizeDeps: { include } }`，覆盖 kit 自身的 peer 依赖；
+需要额外去重/预打包的包用 `viteKitPreset({ extraDedupe: [...], extraOptimizeInclude: [...] })`。
+
+**SPA 用 `file:` 依赖时必须宿主先 `npm run build` 再 `docker build`。**
+`file:` 依赖在容器里就是一个真实目录拷贝，不会像 git 依赖那样在 `npm install` 时自带可执行的
+构建产物；如果 Dockerfile 里跳过宿主构建、直接把源码整个拷进镜像再装依赖，装进去的是 kit 的
+TypeScript 源文件而非 `dist/`，`import '@sensecraft/ui-kit'` 会解析失败或对不上 `exports` 声明的路径。
+正确顺序是本机（或 CI）先把 kit 构建好、`node_modules/@sensecraft/ui-kit` 落地的是构建产物，
+再执行宿主自己的 `npm run build` 和 `docker build`：
+
+```dockerfile
+# Dockerfile 片段：多阶段构建，前端产物在 builder 阶段生成好再拷进运行时镜像
+FROM node:20-slim AS builder
+WORKDIR /app
+# kit 是 file: 依赖，必须和宿主源码一起进 builder 阶段，且要能拿到已经 build 过的 dist/
+COPY sensecraft-ui-kit ./sensecraft-ui-kit
+COPY web/ui ./web/ui
+WORKDIR /app/web/ui
+RUN npm ci && npm run build   # 此时 node_modules/@sensecraft/ui-kit 已经是构建产物，不是源码
+
+FROM nginx:alpine  # 或宿主自己的运行时基础镜像
+COPY --from=builder /app/web/ui/dist /usr/share/nginx/html
+```
+
 ## 接入三步
 
 ### 1. ConfigProvider 套主题

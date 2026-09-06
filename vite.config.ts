@@ -10,9 +10,14 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(__dirname, 'src/index.ts'),
+        // 独立入口，见 src/vite/preset.ts 顶部注释：不引入 React，供宿主
+        // vite.config.ts 在 Node 侧直接 import。
+        'vite/preset': resolve(__dirname, 'src/vite/preset.ts'),
+      },
       formats: ['es'],
-      fileName: () => 'index.js',
+      fileName: (_format: string, entryName: string) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [
@@ -20,8 +25,8 @@ export default defineConfig({
         'react/jsx-runtime',
         'react-dom',
         'antd',
-        'antd/es/locale/zh_CN',
-        'antd/es/locale/en_US',
+        'antd/locale/zh_CN.js',
+        'antd/locale/en_US.js',
         '@ant-design/icons',
         'react-router-dom',
         'react-i18next',

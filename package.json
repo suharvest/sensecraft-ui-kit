@@ -1,6 +1,6 @@
 {
   "name": "@sensecraft/ui-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared React + antd UI kit for SenseCraft demo applications (theme tokens, app shell, page patterns, i18n).",
   "license": "MIT",
   "type": "module",
@@ -12,6 +12,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite/preset.d.ts",
+      "import": "./dist/vite/preset.js"
     },
     "./tokens.css": "./dist/tokens.css",
     "./dist/tokens.css": "./dist/tokens.css",
