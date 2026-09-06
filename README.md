@@ -20,7 +20,7 @@ Seeed SenseCraft 应用统一 UI 组件库 —— SenseCraft 系列应用的共�
 // package.json
 {
   "dependencies": {
-    "@suharvest/ui-kit": "git+ssh://git@github.com/suharvest/sensecraft-ui-kit.git#v0.1.5"
+    "@suharvest/ui-kit": "git+ssh://git@github.com/suharvest/sensecraft-ui-kit.git#v0.1.6"
   }
 }
 ```
@@ -35,7 +35,7 @@ tag 改动不会自动生效，必须显式改 package.json 里的 tag 再安装
 ```jsonc
 {
   "dependencies": {
-    "@suharvest/ui-kit": "^0.1.5"
+    "@suharvest/ui-kit": "^0.1.6"
   }
 }
 ```
