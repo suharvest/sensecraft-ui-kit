@@ -151,6 +151,8 @@ const { pathname } = useLocation();
 
 `minRole` 低于当前用户角色的菜单项会被过滤掉（角色权重 `view < operate < admin`）。
 
+> **必须传 `currentUserRole`。** `ProtectedRoute` 未传角色时按未授权处理（不再默认放行为 `admin`）；`AppShell` 未传角色时按最低角色 `'view'` 过滤菜单（不再默认显示 `admin` 菜单）。宿主应用应在用户信息加载完成后再传入真实角色，加载期间应展示加载态而不是把 `currentUserRole` 留空。
+
 ### 3. 初始化 i18n
 
 ```tsx

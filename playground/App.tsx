@@ -11,6 +11,9 @@ import {
   type MenuItemDef,
   type StatusKey,
 } from '@sensecraft/ui-kit';
+import pkg from '../package.json';
+
+const kitVersion = `v${pkg.version}`;
 
 interface DeviceRow {
   id: string;
@@ -48,7 +51,7 @@ export default function App() {
         title={t('demo:appTitle')}
         subtitle={t('common:auth.login')}
         onSubmit={() => setView('shell')}
-        footer="@sensecraft/ui-kit v0.1.0"
+        footer={`@sensecraft/ui-kit ${kitVersion}`}
         extra={
           <Button block onClick={() => setView('shell')}>
             {t('common:action.back')}
@@ -69,7 +72,7 @@ export default function App() {
       onUserMenuClick={({ key }) => key === 'logout' && setView('login')}
       breadcrumb={[{ title: t('common:nav.dashboard') }, { title: t('demo:devices') }]}
       pageTitle={t('demo:devices')}
-      versionText="v0.1.0"
+      versionText={kitVersion}
       extra={<Button onClick={() => setView('login')}>{t('common:auth.login')}</Button>}
     >
       <ListPage<DeviceRow>

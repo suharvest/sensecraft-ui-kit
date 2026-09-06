@@ -26,6 +26,7 @@ export interface AppShellProps {
   menuItems: MenuItemDef[];
   selectedKey?: string;
   onMenuSelect?: (key: string) => void;
+  /** 未传时按最低角色 'view' 过滤菜单（最小可见集）；宿主应用应在用户信息加载后传入真实角色 */
   currentUserRole?: UserRole;
   userName?: ReactNode;
   userMenuItems?: MenuProps['items'];
@@ -39,7 +40,7 @@ export interface AppShellProps {
   children?: ReactNode;
 }
 
-export function filterMenuByRole(items: MenuItemDef[], role: UserRole = 'admin'): MenuItemDef[] {
+export function filterMenuByRole(items: MenuItemDef[], role: UserRole = 'view'): MenuItemDef[] {
   return items
     .filter((item) => meetsRole(role, item.minRole ?? 'view'))
     .map((item) => (item.children ? { ...item, children: filterMenuByRole(item.children, role) } : item));
@@ -61,7 +62,7 @@ export function AppShell(props: AppShellProps) {
     menuItems,
     selectedKey,
     onMenuSelect,
-    currentUserRole = 'admin',
+    currentUserRole = 'view',
     userName,
     userMenuItems,
     onUserMenuClick,

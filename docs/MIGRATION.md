@@ -19,7 +19,10 @@
 2. `vite.config.ts` 用 `mergeConfig(viteKitPreset(), {...})`（`import { viteKitPreset } from '@sensecraft/ui-kit/vite'`），
    不要自己手写 `resolve.dedupe`——见 README「Vite 配置（`file:` 依赖必读）」，根因是 `file:` 依赖下 Rollup 把
    react-router-dom / i18next 等打成两份，生产构建白屏（dev 正常）
-3. 按 README「接入三步」接 `ConfigProvider` → `AppShell` → `initI18n`
+3. 按 README「接入三步」接 `ConfigProvider` → `AppShell` → `initI18n`；`ProtectedRoute` / `AppShell` 的
+   `currentUserRole` **必须传**——`ProtectedRoute` 未传角色不再默认放行为 `admin`（会按未授权处理），
+   `AppShell` 未传角色时菜单按最低角色 `'view'` 过滤（不再默认显示 `admin` 菜单）。接线检查清单见下方
+   「鉴权接线检查清单」
 4. 列表页用 `ListPage`，详情页用 `DetailPage`，新增/编辑弹窗用 `FormModal`，状态列一律 `StatusTag`
 5. **SPA 用 `file:` 依赖时必须宿主先 `npm run build` 再 `docker build`**——Dockerfile 里不能跳过宿主构建
    直接拷源码进镜像再装依赖，否则装进去的是 kit 的 TS 源码而非 `dist/`；可复制的 Dockerfile 片段见 README 同一节
@@ -108,6 +111,27 @@ body         { background: var(--sc-color-bg-layout); font-family: var(--sc-font
 `solution-indoor-positioning`（验证 token 跨框架）→ `warehouse_system` → `Solution_HVAC_SmartControl`。
 策略 c 的静态页只依赖 `tokens.css`，不依赖 kit 成熟度，可以穿插进行。
 
+## 鉴权接线检查清单
+
+`LoginPage` / `ProtectedRoute` / `AppShell` 三者接线时逐条核对：
+
+1. **角色来源**：`currentUserRole` 从哪里来必须能一句话回答（如"登录接口返回的 `user.role`"）。
+   禁止写死字面量（`currentUserRole="admin"`）或留空——`ProtectedRoute` 未传角色按未授权处理，
+   `AppShell` 未传角色按最低角色 `'view'` 过滤菜单，两者都不会再默认放开成 `admin`。
+2. **加载态**：用户信息（含角色）异步获取时，在数据到达前必须展示加载态（spinner/骨架屏），
+   不能让 `ProtectedRoute`/`AppShell` 在角色未知期间拿到 `undefined` 走"最低权限"或"未授权"分支
+   而误判为 403 或空菜单——那是给已加载但确实无权限的用户看的状态，不是给"还没查到角色"的过渡态用的。
+   常见写法：`if (loadingUser) return <Spin />;` 再渲染 `<ProtectedRoute currentUserRole={user.role}>`。
+3. **401 处理**：`LoginPage` 提交失败、或已登录态下后端返回 401（token 过期/被踢）时，
+   要有统一出口把用户带回登录页并清掉本地缓存的角色信息，避免残留的旧角色继续放行敏感菜单/路由。
+   建议在请求层拦截 401 统一跳转，而不是每个页面各自判断。
+
 ## 版本约定
 
-各应用锁 tag（`#v0.1.0`），不锁分支。kit 接口有破坏性变更时升次版本号并在本文件补迁移步骤。
+各应用锁 tag（`#v0.1.2`），不锁分支。kit 接口有破坏性变更时升次版本号并在本文件补迁移步骤。
+
+### v0.1.2
+
+- `AppShell` 的 `currentUserRole` 默认值从 `'admin'` 改为最低角色 `'view'`：未传角色时菜单按最低权限显示，
+  宿主传了角色才放开更多菜单项。行为与 `ProtectedRoute`（`v0.1.x` 内已去掉 `'admin'` 默认放行）对齐。
+  影响：之前依赖"不传角色也能看到全部菜单"的接入方式需要显式传 `currentUserRole`。
