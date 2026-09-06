@@ -11,6 +11,7 @@ export interface ProtectedRouteProps {
   loadingFallback?: ReactNode;
   /** 访问该分支所需的最低角色 */
   requiredRole?: UserRole;
+  /** 当前用户角色；缺失（如用户信息尚未加载）时按最低权限处理，不放行 requiredRole 分支 */
   currentUserRole?: UserRole;
   forbiddenFallback?: ReactNode;
   children: ReactElement;
@@ -23,7 +24,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
     loading = false,
     loadingFallback = null,
     requiredRole,
-    currentUserRole = 'admin',
+    currentUserRole,
     forbiddenFallback = null,
     children,
   } = props;
