@@ -86,6 +86,18 @@ COPY --from=builder /app/web/ui/dist /usr/share/nginx/html
 
 ### 1. ConfigProvider 套主题
 
+推荐用 `AppConfigProvider`——除了套主题，还会跟随当前语言传 antd 内置 `locale`（分页器/DatePicker
+文案）和 `renderEmpty`（裸 `<Table>`/`<List>`/`<Select>` 的空态用 `common:error.noData` 词典，不再固定显示英文
+"No data"）：
+
+```tsx
+import { AppConfigProvider } from '@sensecraft/ui-kit';
+
+<AppConfigProvider>{/* ... */}</AppConfigProvider>
+```
+
+只需要主题、不需要语言联动时仍可以用原生 `ConfigProvider`：
+
 ```tsx
 import { ConfigProvider } from 'antd';
 import { antdTheme } from '@sensecraft/ui-kit';
@@ -162,6 +174,7 @@ initI18n({
 |---|---|
 | theme | `antdTheme` `tailwindExtend` `colors` `statusColors` `borderRadius` `zIndex` `layoutSizes` `modalWidth` `fontFamilySans` |
 | 语义色 | `statusTagColor` `statusBadgeStatus` `statusPalette` `getStatusColor` `StatusTag` |
+| ConfigProvider | `AppConfigProvider`（跟随当前语言传 antd `locale` + `renderEmpty`，用法见「接入三步 · 1」） |
 | layout | `AppShell` `filterMenuByRole` `ProtectedRoute` `LoginPage` |
 | patterns | `FilterBar` `ListPage` `RowActions` `DetailPage` `FormModal` |
 | i18n | `initI18n` `changeLanguage` `readStoredLanguage` `commonResources` `SUPPORTED_LANGUAGES` |
