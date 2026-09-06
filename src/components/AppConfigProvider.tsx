@@ -4,7 +4,7 @@ import zhCN from 'antd/locale/zh_CN.js';
 import enUS from 'antd/locale/en_US.js';
 import { useTranslation } from 'react-i18next';
 import { antdTheme } from '../theme';
-import { COMMON_NAMESPACE } from '../i18n';
+import { COMMON_NAMESPACE, resolveLanguage } from '../i18n';
 
 type ConfigProviderProps = ComponentProps<typeof ConfigProvider>;
 
@@ -27,7 +27,7 @@ export type AppConfigProviderProps = ConfigProviderProps;
  */
 export function AppConfigProvider({ locale, renderEmpty, theme, ...rest }: ConfigProviderProps) {
   const { t, i18n } = useTranslation(COMMON_NAMESPACE);
-  const lang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'zh';
+  const lang = resolveLanguage(i18n.language);
 
   return (
     <ConfigProvider

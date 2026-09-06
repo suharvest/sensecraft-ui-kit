@@ -19,6 +19,11 @@ export function readStoredLanguage(fallback: SupportedLanguage = 'zh'): Supporte
   return fallback;
 }
 
+/** 把 i18next 的当前语言（可能是 `en-US` / `EN` 等变体）归一到 kit 支持的两种语言。 */
+export function resolveLanguage(lang: string | undefined): SupportedLanguage {
+  return lang?.toLowerCase().startsWith('en') ? 'en' : 'zh';
+}
+
 export function persistLanguage(lang: SupportedLanguage): void {
   try {
     globalThis.localStorage?.setItem(LANGUAGE_STORAGE_KEY, lang);
@@ -26,6 +31,8 @@ export function persistLanguage(lang: SupportedLanguage): void {
     /* 忽略写入失败 */
   }
 }
+
+const PERSIST_BOUND = new WeakSet<I18nInstance>();
 
 export interface InitI18nOptions {
   /** 各应用自己的业务词条，形如 { zh: { app: {...} }, en: { app: {...} } } */
@@ -68,9 +75,13 @@ export function initI18n(options: InitI18nOptions = {}): I18nInstance {
     instance.changeLanguage(lng);
   }
 
-  instance.on('languageChanged', (next) => {
-    if (next === 'zh' || next === 'en') persistLanguage(next);
-  });
+  // initI18n 可能被同一个实例重复调用（HMR / 多次挂载），监听器只挂一次，避免累积。
+  if (!PERSIST_BOUND.has(instance)) {
+    PERSIST_BOUND.add(instance);
+    instance.on('languageChanged', (next) => {
+      if (next === 'zh' || next === 'en') persistLanguage(next);
+    });
+  }
 
   return instance;
 }

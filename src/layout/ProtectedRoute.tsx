@@ -1,8 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import type { UserRole } from './AppShell';
-
-const ROLE_WEIGHT: Record<UserRole, number> = { view: 0, operate: 1, admin: 2 };
+import { meetsRole, type UserRole } from './roles';
 
 export interface ProtectedRouteProps {
   isAuthenticated: boolean;
@@ -33,7 +31,7 @@ export function ProtectedRoute(props: ProtectedRouteProps) {
 
   if (loading) return <>{loadingFallback}</>;
   if (!isAuthenticated) return <Navigate to={redirectTo} replace state={{ from: location }} />;
-  if (requiredRole && ROLE_WEIGHT[currentUserRole] < ROLE_WEIGHT[requiredRole]) {
+  if (requiredRole && !meetsRole(currentUserRole, requiredRole)) {
     return <>{forbiddenFallback}</>;
   }
   return children;

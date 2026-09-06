@@ -4,11 +4,8 @@ import type { MenuProps } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GlobeIcon, MenuIcon, UserIcon } from '../components/icons';
 import { layoutSizes } from '../theme/tokens';
-import { changeLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n';
-
-export type UserRole = 'view' | 'operate' | 'admin';
-
-const ROLE_WEIGHT: Record<UserRole, number> = { view: 0, operate: 1, admin: 2 };
+import { changeLanguage, resolveLanguage, SUPPORTED_LANGUAGES, type SupportedLanguage } from '../i18n';
+import { meetsRole, type UserRole } from './roles';
 
 export interface MenuItemDef {
   key: string;
@@ -43,9 +40,8 @@ export interface AppShellProps {
 }
 
 export function filterMenuByRole(items: MenuItemDef[], role: UserRole = 'admin'): MenuItemDef[] {
-  const allowed = ROLE_WEIGHT[role] ?? 0;
   return items
-    .filter((item) => allowed >= ROLE_WEIGHT[item.minRole ?? 'view'])
+    .filter((item) => meetsRole(role, item.minRole ?? 'view'))
     .map((item) => (item.children ? { ...item, children: filterMenuByRole(item.children, role) } : item));
 }
 
@@ -86,8 +82,9 @@ export function AppShell(props: AppShellProps) {
     [menuItems, currentUserRole],
   );
 
+  const currentLang = resolveLanguage(i18n.language);
   const languageMenu: MenuProps = {
-    selectedKeys: [i18n.language?.startsWith('en') ? 'en' : 'zh'],
+    selectedKeys: [currentLang],
     items: SUPPORTED_LANGUAGES.map((lang) => ({ key: lang, label: t(`language.${lang}`) })),
     onClick: ({ key }) => changeLanguage(key as SupportedLanguage, i18n),
   };
@@ -164,7 +161,7 @@ export function AppShell(props: AppShellProps) {
               {showLanguageSwitch && (
                 <Dropdown menu={languageMenu} trigger={['click']}>
                   <Button type="text" icon={<GlobeIcon />} data-testid="lang-switch">
-                    {t(`language.${i18n.language?.startsWith('en') ? 'en' : 'zh'}`)}
+                    {t(`language.${currentLang}`)}
                   </Button>
                 </Dropdown>
               )}
