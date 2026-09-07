@@ -5,16 +5,34 @@ Seeed SenseCraft 应用统一 UI 组件库 —— SenseCraft 系列应用的共�
 实现依据 `seeed-solutions-hub/docs/specs/ui-style-guide.md`（综合 sensecraft-voice-web 与 warehouse_system/frontend 两个基准）。
 
 - 技术栈：React 18 + antd 5 + TypeScript，Vite library mode 产出 ESM + `.d.ts`
-- 分发：git tag 依赖（当前）；npm registry 发布后可切换为版本号依赖
+- 分发：已发布到 npm registry（`@suharvest/ui-kit`，MIT，镜像 npmmirror 已同步）；历史 git tag 依赖仍可用作 fallback
 - 附带 `dist/tokens.css`（纯 CSS 变量），供 Vue / 原生 JS 应用套同一套 token
 
 ## 安装
 
 三种方式，按场景选。
 
-### 1. git tag 依赖（当前推荐）
+### 1. npm registry（推荐）
 
-仓库转公开前，消费方机器需要配置好 GitHub SSH key；转公开后 `git+https://` 亦可。
+```bash
+npm install @suharvest/ui-kit@^0.1.6
+```
+
+```jsonc
+// package.json
+{
+  "dependencies": {
+    "@suharvest/ui-kit": "^0.1.6"
+  }
+}
+```
+
+包名 `@suharvest/ui-kit` 为 scoped 包，`publishConfig.access` 为 `public`。已同步至 npmmirror，
+国内网络直接 `npm install` 即可，无需额外配置 registry 或 GitHub SSH key。
+
+### 2. git tag 依赖（历史 fallback）
+
+registry 不可用时的备选方案，仓库转公开前消费方机器需要配置好 GitHub SSH key；转公开后 `git+https://` 亦可。
 
 ```jsonc
 // package.json
@@ -29,18 +47,6 @@ npm 安装 git 依赖时会克隆仓库、装 devDependencies、执行 `prepare`
 `dist/` 在消费方机器上现场生成，因此本仓库不提交 `dist/`。
 升级 kit 时改 tag 号后 `npm install` 即可；npm 会按 lockfile 里记录的 commit 锁定，
 tag 改动不会自动生效，必须显式改 package.json 里的 tag 再安装。
-
-### 2. npm registry（即将发布 `@suharvest/ui-kit`）
-
-```jsonc
-{
-  "dependencies": {
-    "@suharvest/ui-kit": "^0.1.6"
-  }
-}
-```
-
-包名 `@suharvest/ui-kit` 为 scoped 包，`publishConfig.access` 已设为 `public`。
 
 ### 3. 本地开发（`npm link`）
 
